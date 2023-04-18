@@ -3,16 +3,21 @@ import boto3
 ec2 = boto3.resource('ec2')
 
     
-instances = ec2.instances.filter(
-     Filters = [
-          {'Name': 'instance-state-name', 'Values': ['running']},
-          {'Name': 'tag:ENV','Values':['Development']}
-     ]
+dev = ec2.create_instances(
+    ImageId='ami-09c5c62bac0d0634e', #Image ID is specidic to your account
+    InstanceType='t2.micro',
+    MaxCount= 3,
+    MinCount= 3,
+    TagSpecifications=[
+        {
+            'ResourceType': 'instance',
+            'Tags': [
+                {'Key': 'Name','Value': 'Production'},#Change the ID as required
+                {'Key': 'ENV','Value': 'Production'}
+                
+            ]
+        }
+    ]
 )
 
-for instance in instances:
-     try:
-          instance.stop()
-          print(f'{instance} has been put into stopped state')
-     except:
-          print(f'There are no instances to be stopped')
+print(dev)
